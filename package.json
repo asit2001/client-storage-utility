@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "A javascript utilty to store kV data on browser.",
   "main": "dist/clientStorage.js",
-  "author": "Asit Biswas",
+  "repository": "https://github.com/asit2001/client-storage-utility.git",
+  "author": "AsitBiswas <asitchakudanga@gmail.com>",
   "license": "MIT",
   "scripts": {
     "build": "tsc",
