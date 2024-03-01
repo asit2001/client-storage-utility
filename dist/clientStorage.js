@@ -1,36 +1,37 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class CookieStorage {
-    constructor(cookieName) {
+var CookieStorage = /** @class */ (function () {
+    function CookieStorage(cookieName) {
         if (CookieStorage.storage) {
             return CookieStorage.storage;
         }
         this.STORAGE_NAME = cookieName;
         CookieStorage.storage = this;
     }
-    getUpdatedTime(numDays = 7) {
-        const now = new Date();
+    CookieStorage.prototype.getUpdatedTime = function (numDays) {
+        if (numDays === void 0) { numDays = 7; }
+        var now = new Date();
         now.setTime(now.getTime() + numDays * 24 * 60 * 60 * 1000);
         return now.toUTCString();
-    }
-    setItem(key, value) {
-        const expires = "expires=" + this.getUpdatedTime();
-        const existingCookie = this.getItem();
-        let cookieJson = {};
+    };
+    CookieStorage.prototype.setItem = function (key, value) {
+        var expires = "expires=" + this.getUpdatedTime();
+        var existingCookie = this.getItem();
+        var cookieJson = {};
         if (existingCookie) {
             cookieJson = JSON.parse(existingCookie);
         }
         cookieJson[key] = value;
-        let cookieStr = this.STORAGE_NAME + "=" + JSON.stringify(cookieJson) + ";";
+        var cookieStr = this.STORAGE_NAME + "=" + JSON.stringify(cookieJson) + ";";
         cookieStr += expires + ";path=/";
         document.cookie = cookieStr;
-    }
-    getItem() {
-        const name = this.STORAGE_NAME + "=";
-        const decodedCookie = decodeURIComponent(document.cookie);
-        const cookies = decodedCookie.split(";");
-        for (let i = 0; i < cookies.length; i++) {
-            let cookie = cookies[i];
+    };
+    CookieStorage.prototype.getItem = function () {
+        var name = this.STORAGE_NAME + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var cookies = decodedCookie.split(";");
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i];
             while (cookie.charAt(0) == " ") {
                 cookie = cookie.substring(1);
             }
@@ -39,45 +40,47 @@ class CookieStorage {
             }
         }
         return "";
-    }
-    removeItem(key) {
-        const expires = "expires=" + this.getUpdatedTime();
-        const existingCookie = this.getItem();
-        let cookieJson = {};
+    };
+    CookieStorage.prototype.removeItem = function (key) {
+        var expires = "expires=" + this.getUpdatedTime();
+        var existingCookie = this.getItem();
+        var cookieJson = {};
         if (existingCookie) {
             cookieJson = JSON.parse(existingCookie);
             delete cookieJson[key];
         }
-        let cookieStr = this.STORAGE_NAME + "=" + JSON.stringify(cookieJson) + ";";
+        var cookieStr = this.STORAGE_NAME + "=" + JSON.stringify(cookieJson) + ";";
         cookieStr += expires + ";path=/";
         document.cookie = cookieStr;
-    }
-}
-class MemoryStorage {
-    constructor() {
+    };
+    return CookieStorage;
+}());
+var MemoryStorage = /** @class */ (function () {
+    function MemoryStorage() {
         if (MemoryStorage.storage) {
             return MemoryStorage.storage;
         }
         this.memStorage = new Map();
         MemoryStorage.storage = this;
     }
-    setItem(key, value) {
+    MemoryStorage.prototype.setItem = function (key, value) {
         var _a;
         (_a = this.memStorage) === null || _a === void 0 ? void 0 : _a.set(key, value);
-    }
-    getItem(key) {
+    };
+    MemoryStorage.prototype.getItem = function (key) {
         var _a;
-        const value = (_a = this.memStorage) === null || _a === void 0 ? void 0 : _a.get(key);
+        var value = (_a = this.memStorage) === null || _a === void 0 ? void 0 : _a.get(key);
         if (value) {
             return value;
         }
         return null;
-    }
-    removeItem(key) {
+    };
+    MemoryStorage.prototype.removeItem = function (key) {
         var _a;
         (_a = this.memStorage) === null || _a === void 0 ? void 0 : _a.delete(key);
-    }
-}
+    };
+    return MemoryStorage;
+}());
 /**
  * Creates a client storage instance with specified options.
  * @param {string[]} [allowedKeys] list of allowed keys. leave empty of for all strings
@@ -101,9 +104,9 @@ class MemoryStorage {
  * clientStorage.removeItem('key1');
  */
 function createClientStorage(allowedKeys) {
-    let storage = sessionStorage;
-    let storageType = "sessionStorage";
-    const STORAGE_NAME = "__react__storage";
+    var storage = sessionStorage;
+    var storageType = "sessionStorage";
+    var STORAGE_NAME = "__react__storage";
     /**
    * Sets the storage type.
    * @param {StorageType} storeName - The type of storage to use. default  `sessionStorage`
@@ -128,22 +131,23 @@ function createClientStorage(allowedKeys) {
         }
     }
     function setItem(key, value) {
+        var _a;
         if (allowedKeys && !allowedKeys.includes(key)) {
-            throw new Error(`Key '${key}' is not allowed.`);
+            throw new Error("Key '".concat(key, "' is not allowed."));
         }
         if (storageType === "memoryStorage" || storageType === "cookieStorage") {
             storage.setItem(key, value);
         }
         else {
-            const storeValue = storage.getItem(STORAGE_NAME);
-            let oldValue;
+            var storeValue = storage.getItem(STORAGE_NAME);
+            var oldValue = void 0;
             if (storeValue) {
                 oldValue = JSON.parse(storeValue);
                 oldValue[key] = value;
                 storage.setItem(STORAGE_NAME, JSON.stringify(oldValue));
             }
             else {
-                storage.setItem(STORAGE_NAME, JSON.stringify({ [key]: value }));
+                storage.setItem(STORAGE_NAME, JSON.stringify((_a = {}, _a[key] = value, _a)));
             }
         }
     }
@@ -154,14 +158,14 @@ function createClientStorage(allowedKeys) {
    */
     function getItem(key) {
         if (allowedKeys && !allowedKeys.includes(key)) {
-            throw new Error(`Key '${key}' is not allowed.`);
+            throw new Error("Key '".concat(key, "' is not allowed."));
         }
         if (storageType === "memoryStorage" || storageType === "cookieStorage") {
             return storage.getItem(key);
         }
-        const storageValue = storage.getItem(STORAGE_NAME);
+        var storageValue = storage.getItem(STORAGE_NAME);
         if (storageValue) {
-            const parsedVAlue = JSON.parse(storageValue);
+            var parsedVAlue = JSON.parse(storageValue);
             return parsedVAlue[key] || null;
         }
         return null;
@@ -172,15 +176,15 @@ function createClientStorage(allowedKeys) {
    */
     function removeItem(key) {
         if (allowedKeys && !allowedKeys.includes(key)) {
-            throw new Error(`Key '${key}' is not allowed.`);
+            throw new Error("Key '".concat(key, "' is not allowed."));
         }
         if (storageType === "memoryStorage" || storageType === "cookieStorage") {
             storage.removeItem(key);
         }
         else {
-            const storeValue = storage.getItem(STORAGE_NAME);
+            var storeValue = storage.getItem(STORAGE_NAME);
             if (storeValue) {
-                const oldValue = JSON.parse(storeValue);
+                var oldValue = JSON.parse(storeValue);
                 delete oldValue[key];
                 storage.setItem(STORAGE_NAME, JSON.stringify(oldValue));
             }
@@ -191,19 +195,19 @@ function createClientStorage(allowedKeys) {
        * @returns {Object} An object with setStorage, setItem, getItem, and removeItem methods.
        */
     return {
-        setStorage,
-        setItem,
+        setStorage: setStorage,
+        setItem: setItem,
         /**
          * Gets an item from the storage.
          * @param {string} key - The key of the item to get.
          * @returns {string | null} The stored value, or null if the key does not exist.
          */
-        getItem,
+        getItem: getItem,
         /**
         * Removes an item from the storage.
         * @param {string} key - The key of the item to remove.
         */
-        removeItem,
+        removeItem: removeItem,
     };
 }
 exports.default = createClientStorage;

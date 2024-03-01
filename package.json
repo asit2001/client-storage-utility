@@ -18,5 +18,5 @@
     "ts-jest": "^29.1.2",
     "typescript": "^5.3.3"
   },
-  "types": "./types/clientStorage.d.ts"
+  "types": "./src/clientStorage.d.ts"
 }
