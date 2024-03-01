@@ -1,6 +1,6 @@
 {
   "name": "client-storage-utility",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A javascript utilty to store kV data on browser.",
   "main": "dist/clientStorage.js",
   "repository": "https://github.com/asit2001/client-storage-utility.git",
@@ -8,8 +8,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "test": "jest",
-    "publish": ""
+    "test": "jest"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
